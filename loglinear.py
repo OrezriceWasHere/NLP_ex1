@@ -4,6 +4,7 @@ STUDENT={'name': 'YOUR NAME',
          'ID': 'YOUR ID NUMBER'}
 
 def softmax(x):
+
     """
     Compute the softmax vector.
     x: a n-dim vector (numpy array)
@@ -15,8 +16,8 @@ def softmax(x):
     # With a vectorized implementation, the code should be no more than 2 lines.
     #
     # For numeric stability, use the identify you proved in Ex 2 Q1.
-    return x
-    
+    e_x = np.exp(x - np.max(x))
+    return e_x / e_x.sum()
 
 def classifier_output(x, params):
     """
@@ -25,7 +26,7 @@ def classifier_output(x, params):
     """
     W,b = params
     # YOUR CODE HERE.
-    return probs
+    return softmax(np.dot(x, W)+b)
 
 def predict(x, params):
     """
@@ -50,7 +51,22 @@ def loss_and_gradients(x, y, params):
     gW: matrix, gradients of W
     gb: vector, gradients of b
     """
+    probs = classifier_output(x, params)
+    # Compute log loss and gradients
+    # Computing sum of log probability multiplied by y, when y is one hot vector,
+    # will result the same as only multiplying  the log probability of the correct class
+    loss = -np.log(probs[y])
     W,b = params
+    # here I will calculate the gradient of the loss with respect to the parameters the gradient of the loss with
+    # respect to the bias is the same as the gradient of the loss with respect to the output of the softmax function,
+    # which is the probability of the correct class
+    gb = probs
+    gb[y] -= 1
+    # the gradient of the loss with respect to the weights is the gradient of the loss with respect to the output
+    # of the softmax function multiplied by the input vector
+    gW = np.outer(x, probs)
+    #gW[:,y] -= x
+
     # YOU CODE HERE
     return loss,[gW,gb]
 

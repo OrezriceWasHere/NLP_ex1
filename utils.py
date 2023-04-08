@@ -1,29 +1,51 @@
 # This file provides code which you may or may not find helpful.
 # Use it if you want, or ignore it.
 import random
-def read_data(fname):
+
+from typing import List, Tuple
+
+
+def read_data(fname) -> List[Tuple[str, str]]:
     data = []
-    for line in file(fname):
-        label, text = line.strip().lower().split("\t",1)
+    for line in open(fname):
+        label, text = line.strip().lower().split("\t", 1)
         data.append((label, text))
     return data
 
-def text_to_bigrams(text):
-    return ["%s%s" % (c1,c2) for c1,c2 in zip(text,text[1:])]
 
-TRAIN = [(l,text_to_bigrams(t)) for l,t in read_data("train")]
-DEV   = [(l,text_to_bigrams(t)) for l,t in read_data("dev")]
+def text_to_bigrams(text):
+    return ["%s%s" % (c1, c2) for c1, c2 in zip(text, text[1:])]
+
+
+MISFIT = "\0\0"
+INPUT_SIZE = 30
+
+# If text is shorter than size, pad with MISFIT.
+# If text is longer than size, truncate.
+def to_fixed_size(word_array, size):
+    return word_array[:size] + [MISFIT] * max(0, size - len(word_array))
+
+
+TRAIN = [(l, to_fixed_size(text_to_bigrams(t), INPUT_SIZE)) for l, t in read_data("data/train")]
+DEV = [(l, to_fixed_size(text_to_bigrams(t), INPUT_SIZE)) for l, t in read_data("data/dev")]
 
 from collections import Counter
+
 fc = Counter()
-for l,feats in TRAIN:
+for l, feats in TRAIN:
     fc.update(feats)
 
 # 600 most common bigrams in the training set.
-vocab = set([x for x,c in fc.most_common(600)])
+vocab = set([x for x, c in fc.most_common(600)])
 
 # label strings to IDs
-L2I = {l:i for i,l in enumerate(list(sorted(set([l for l,t in TRAIN]))))}
+L2I = {l: i for i, l in enumerate(list(sorted(set([l for l, t in TRAIN]))))}
 # feature strings (bigrams) to IDs
-F2I = {f:i for i,f in enumerate(list(sorted(vocab)))}
+F2I = {f: i for i, f in enumerate(list(sorted(vocab)))}
 
+
+OUTPUT_CLASSES = ("en", "es", "fr", "de", "nl", "it")
+CLASS_TO_INDEX = {c: i for i, c in enumerate(OUTPUT_CLASSES)}
+# bigram modol
+
+MISFIT_INDEX = F2I.get(MISFIT, len(vocab))

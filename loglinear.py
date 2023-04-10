@@ -65,7 +65,7 @@ def loss_and_gradients(x, y, params):
     # the gradient of the loss with respect to the weights is the gradient of the loss with respect to the output
     # of the softmax function multiplied by the input vector
     gW = np.outer(x, probs)
-    #gW[:,y] -= x
+    gW[:,y] -= x
 
     # YOU CODE HERE
     return loss,[gW,gb]

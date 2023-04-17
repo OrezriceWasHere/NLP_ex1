@@ -17,6 +17,7 @@ def text_to_bigrams(text):
 
 TRAIN = [(l, text_to_bigrams(t)) for l, t in read_data("data/train")]
 DEV = [(l, text_to_bigrams(t)) for l, t in read_data("data/dev")]
+TEST = [(l, text_to_bigrams(t)) for l, t in read_data("data/test")]
 
 uni_TRAIN = read_data('data/train')
 uni_DEV = read_data('data/dev')

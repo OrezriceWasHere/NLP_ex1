@@ -1,14 +1,25 @@
 import numpy as np
 
-STUDENT={'name': 'YOUR NAME',
-         'ID': 'YOUR ID NUMBER'}
+import loglinear
+import mlp1
+
+STUDENT = {'name': 'YOUR NAME',
+           'ID': 'YOUR ID NUMBER'}
+
 
 def classifier_output(x, params):
-    # YOUR CODE HERE.
-    return probs
+    tuples = list(zip(params[0::2], params[1::2]))
+
+    h = x
+    for t in tuples[:-1]:
+        h = mlp1.hidden_output(h, t)
+
+    return loglinear.classifier_output(h, tuples[-1])
+
 
 def predict(x, params):
     return np.argmax(classifier_output(x, params))
+
 
 def loss_and_gradients(x, y, params):
     """
@@ -27,8 +38,36 @@ def loss_and_gradients(x, y, params):
     (of course, if we request a linear classifier (ie, params is of length 2),
     you should not have gW2 and gb2.)
     """
-    # YOU CODE HERE
-    return ...
+
+    tuples = list(zip(params[0::2], params[1::2]))
+
+    hs = [x]
+    for i, t in enumerate(tuples[:-1]):
+        hs.append(mlp1.hidden_output(hs[-1], t))
+
+    loss, (gU, gb_tag, gh) = loglinear.loss_and_gradients(hs[-1], y, tuples[-1])
+
+    gradients = []
+
+    for x, h, t in reversed(list(zip(hs, hs[1:], tuples))):
+        W, b = t
+        z = np.dot(x, W) + b
+
+        sech = 1 / np.cosh(z) ** 2
+
+        dL_du = gh * sech
+
+        gW = np.outer(x, dL_du)
+
+        gb = dL_du
+
+        gh = gb @ np.transpose(W)
+
+        gradients.insert(0, gb)
+        gradients.insert(0, gW)
+
+    return loss, gradients + [gU, gb_tag]
+
 
 def create_classifier(dims):
     """
@@ -50,6 +89,6 @@ def create_classifier(dims):
     to first layer, then the second two are the matrix and vector from first to
     second layer, and so on.
     """
-    params = []
-    return params
 
+    params = sum([loglinear.create_classifier(i, o) for i, o in zip(dims, dims[1:])], [])
+    return params

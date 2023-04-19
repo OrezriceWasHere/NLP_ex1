@@ -99,6 +99,8 @@ if __name__ == '__main__':
     weights = ll.create_classifier(in_dim, out_dim)
     trained_params = train_classifier(train_data, dev_data, num_iterations, learning_rate, weights, ll, uni)
 
+    exit()
+
     with open('test.pred', 'w') as file:
         for label, features in utils.TEST:
             x = feats_to_vec(features, uni)

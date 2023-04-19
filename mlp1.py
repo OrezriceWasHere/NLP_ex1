@@ -40,7 +40,7 @@ def loss_and_gradients(x, y, params):
     z = np.dot(x, W) + b
     hidden = np.tanh(z)
 
-    loss, (gU, gb_tag, gh) = loglinear.loss_and_gradients(hidden, y, params[2:])
+    loss, (gU, gb_tag, gh) = loglinear.loss_and_gradients(hidden, y, params[2:], True)
 
     sech = 1 / np.cosh(z) ** 2
 

@@ -45,7 +45,7 @@ def loss_and_gradients(x, y, params):
     for i, t in enumerate(tuples[:-1]):
         hs.append(mlp1.hidden_output(hs[-1], t))
 
-    loss, (gU, gb_tag, gh) = loglinear.loss_and_gradients(hs[-1], y, tuples[-1])
+    loss, (gU, gb_tag, gh) = loglinear.loss_and_gradients(hs[-1], y, tuples[-1], True)
 
     gradients = []
 

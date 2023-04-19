@@ -1,3 +1,3 @@
-1. Yes, we can acheive better accuracies on this task. Specifically, the perceptron was about 0.86 accurate on the test set, while some MLP achieved 0.85 (100 hidden units) or 0.856 (50 hidden units) accuracy. Seems like a bit overfitting for the large networks, since on the training set they were much better.
+1. No, we couldn't achieve better accuracies on the task. Specifically, the perceptron was about 0.86 accurate on the test set, while some MLP achieved 0.85 (100 hidden units) or 0.856 (50 hidden units) accuracy. Seems like a bit overfitting for the large networks, since on the training set they were much better.
 2. Much worse. 0.63 for perceptron and 0.72 for MLP
 3.When choosing large enough learning rate (0.05) it took typically ~800 iterations over the whole data. For even larger (0.1) learning rate it could take less (~200), but sometimes failed completely. For smaller learning rate it could take much more. (5 hidden units)

@@ -43,7 +43,7 @@ def predict(x, params):
     return np.argmax(classifier_output(x, params))
 
 
-def loss_and_gradients(x, y, params):
+def loss_and_gradients(x, y, params, with_x=False):
     """
     Compute the loss and the gradients at point x with given parameters.
     y is a scalar indicating the correct label.
@@ -71,6 +71,9 @@ def loss_and_gradients(x, y, params):
     # of the softmax function multiplied by the input vector
     gW = np.outer(x, probs) #np.outer(x, probs)
     gW[:, y] -= x
+
+    if not with_x:
+        return loss, [gW, gb]
 
     dL_ds = np.zeros_like(probs)
     dL_ds[y] = -1 / probs[y]
